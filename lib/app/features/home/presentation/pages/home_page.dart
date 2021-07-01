@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:proximo_filme_mcu/app/features/home/presentation/cubit/home_cubit.dart';
+import 'package:proximo_filme_mcu/app/features/home/presentation/widgets/marvel_loading_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -51,7 +52,9 @@ class _HomePageState extends State<HomePage> {
           );
         }
 
-        return Center(child: CircularProgressIndicator());
+        return Center(
+          child: MarvelLoadingWidget(),
+        );
       }),
     );
   }
