@@ -15,6 +15,7 @@ class ProximoFilmeRepositoryImpl implements ProximoFilmeRepositoryContract {
     final map = await _datasource.obterProximoFilme();
     if (map != null) {
       try {
+        print(map);
         return ProximoFilmeModel.fromMap(map);
       } catch (e) {}
     }
