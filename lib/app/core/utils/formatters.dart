@@ -8,6 +8,9 @@ String? formatDate(String date) {
 
     return '$day/$month/$year';
   } catch (e) {
-    throw Exception('O valor informado não é uma data no formato YYYY-MM-DD');
+    throw FormatException(
+      'O valor informado não é uma data no formato YYYY-MM-DD',
+      date,
+    );
   }
 }
