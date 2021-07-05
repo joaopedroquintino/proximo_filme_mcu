@@ -11,8 +11,8 @@ class ProximoFilmeRepositoryImpl implements ProximoFilmeRepositoryContract {
   IProximoFilmeDatasource _datasource;
 
   @override
-  Future<ProximoFilmeEntity?> buscarProximoFilme() async {
-    final map = await _datasource.obterProximoFilme();
+  Future<ProximoFilmeEntity?> buscarProximoFilme(String? data) async {
+    final map = await _datasource.obterProximoFilme(data);
     if (map != null) {
       try {
         print(map);

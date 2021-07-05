@@ -13,74 +13,108 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  late HomeCubit cubit;
+
   @override
   void initState() {
     super.initState();
+    cubit = BlocProvider.of<HomeCubit>(context);
+    cubit.obterProximoFilme();
+  }
 
-    BlocProvider.of<HomeCubit>(context).obterProximoFilme();
+  @override
+  void dispose() {
+    cubit.close();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocBuilder<HomeCubit, HomeState>(builder: (context, state) {
-        if (state is HomeError) {
+      body: SafeArea(
+        child: BlocBuilder<HomeCubit, HomeState>(builder: (context, state) {
+          if (state is HomeError) {
+            return Center(
+              child: TextButton(
+                onPressed: () {
+                  cubit.obterProximoFilme();
+                },
+                child: Text('Tentar Novamente'),
+              ),
+            );
+          }
+
+          if (state is HomeSuccess) {
+            final proximoFilme = state.proximoFilme;
+
+            return Container(
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                gradient: RadialGradient(colors: [
+                  Theme.of(context).primaryColorDark,
+                  Theme.of(context).scaffoldBackgroundColor,
+                ], stops: [
+                  0.3,
+                  1.0,
+                ]),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  if (cubit.dataBusca != null)
+                    Container(
+                      alignment: Alignment.topLeft,
+                      child: IconButton(
+                        onPressed: () {
+                          cubit.reset();
+                        },
+                        icon: Icon(Icons.close),
+                      ),
+                    ),
+                  Column(
+                    children: [
+                      Text(
+                        proximoFilme.title,
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.headline3,
+                      ),
+                      Text(
+                        'Lança em ${proximoFilme.daysUntil} dias',
+                        style: Theme.of(context).textTheme.headline5,
+                      ),
+                    ],
+                  ),
+                  Flexible(
+                    child: SizedBox(
+                      height: MediaQuery.of(context).size.height * .5,
+                      child: Image.network(proximoFilme.posterUrl),
+                    ),
+                  ),
+                  Text(
+                    formatDate(proximoFilme.releaseDate) ?? '',
+                    style: Theme.of(context).textTheme.headline6,
+                  ),
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                        Theme.of(context).primaryColor,
+                      ),
+                    ),
+                    child: Text('Próxima produção'),
+                    onPressed: () {
+                      cubit.buscarFilmeData(proximoFilme.releaseDate);
+                    },
+                  ),
+                ],
+              ),
+            );
+          }
+
           return Center(
-            child: TextButton(
-              onPressed: () {
-                BlocProvider.of<HomeCubit>(context).obterProximoFilme();
-              },
-              child: Text('Tentar Novamente'),
-            ),
+            child: MarvelLoadingWidget(),
           );
-        }
-
-        if (state is HomeSuccess) {
-          final proximoFilme = state.proximoFilme;
-
-          return Container(
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              gradient: RadialGradient(colors: [
-                Theme.of(context).primaryColorDark,
-                Theme.of(context).scaffoldBackgroundColor,
-              ], stops: [
-                0.3,
-                1.0,
-              ]),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Column(
-                  children: [
-                    Text(
-                      proximoFilme.title,
-                      style: Theme.of(context).textTheme.headline3,
-                    ),
-                    Text(
-                      'Lança em ${proximoFilme.daysUntil} dias',
-                      style: Theme.of(context).textTheme.headline5,
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * .5,
-                  child: Image.network(proximoFilme.posterUrl),
-                ),
-                Text(
-                  formatDate(proximoFilme.releaseDate) ?? '',
-                  style: Theme.of(context).textTheme.headline6,
-                ),
-              ],
-            ),
-          );
-        }
-
-        return Center(
-          child: MarvelLoadingWidget(),
-        );
-      }),
+        }),
+      ),
     );
   }
 }

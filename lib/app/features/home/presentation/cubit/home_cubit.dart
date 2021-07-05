@@ -12,11 +12,12 @@ class HomeCubit extends Cubit<HomeState> {
         super(HomeLoading());
 
   BuscarProximoFilmeUsecase _buscarProximoFilmeUsecase;
+  String? dataBusca;
 
   Future<void> obterProximoFilme() async {
     emit(HomeLoading());
 
-    final proximoFilme = await _buscarProximoFilmeUsecase();
+    final proximoFilme = await _buscarProximoFilmeUsecase(dataBusca);
 
     if (proximoFilme == null) {
       emit(
@@ -27,5 +28,15 @@ class HomeCubit extends Cubit<HomeState> {
         HomeSuccess(proximoFilme: proximoFilme),
       );
     }
+  }
+
+  void buscarFilmeData(String data) {
+    dataBusca = data;
+    obterProximoFilme();
+  }
+
+  void reset() {
+    dataBusca = null;
+    obterProximoFilme();
   }
 }

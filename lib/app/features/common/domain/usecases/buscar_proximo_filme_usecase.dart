@@ -8,7 +8,7 @@ class BuscarProximoFilmeUsecase {
 
   ProximoFilmeRepositoryContract _repository;
 
-  Future<ProximoFilmeEntity?> call() async {
-    return _repository.buscarProximoFilme();
+  Future<ProximoFilmeEntity?> call(String? data) async {
+    return _repository.buscarProximoFilme(data);
   }
 }
